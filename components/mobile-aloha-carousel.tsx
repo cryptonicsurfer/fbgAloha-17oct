@@ -83,6 +83,11 @@ const slides: Slide[] = [
     content: "• Följ oss Näringslivsavdelningen på Instagram",
     mediaType: "image",
     mediaUrl: "https://storage.googleapis.com/falkenberg.tech/halland-techweek/falkenberg-tech.png"
+  },
+  {title: "Titta på presentationen senare? Här är QR-koden:",
+    content: "",
+    mediaType: "image",
+    mediaUrl: "https://storage.googleapis.com/falkenberg.tech/halland-techweek/qr_code_fbg_aloha_17oct.png"
   }
 ];
 
