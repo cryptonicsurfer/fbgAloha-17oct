@@ -80,7 +80,7 @@ const MatrixWelcome = () => {
 
       ctx.font = `${fontSize}px monospace`
 
-      drops.forEach((drop, i) => {
+      drops.forEach((drop) => {
         if (drop.active && !allLettersFormed) {
           // Draw the trail
           drop.chars.forEach((char, index) => {

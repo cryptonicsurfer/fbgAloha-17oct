@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import MatrixWelcome from './MatrixWelcome';
+import Image from 'next/image';
 
 interface Slide {
   title: string;
@@ -18,7 +19,7 @@ interface Slide {
 const slides: Slide[] = [
   { 
     title: "Välkommen till Halland TechWeek 2024", 
-    content: "Matrix Welcome Animation", 
+    content: "Mobile Aloha Falkenberg", 
     mediaType: "component", 
     component: MatrixWelcome 
   },
@@ -33,13 +34,13 @@ const slides: Slide[] = [
     title: "Inspiration och vision",
     content: "• Mobile Aloha-koncept från Stanford\n• Open-source-natur\n• Möjligheter för mindre företag",
     mediaType: "image",
-    mediaUrl: "https://cdn.midjourney.com/04ec4686-7c9e-4c91-a6d2-ca42b106b1db/0_0.png"
+    mediaUrl: "https://storage.googleapis.com/falkenberg.tech/halland-techweek/inspiration.png"
   },
   {
     title: "Fröet gror",
     content: "• Februari 2024: Idéfas och förberedelser\n• Mars 2024: Inledande kommunikation\n• 9 april 2024: Första mötet\n• 16 maj 2024: Beviljat bidrag 300 000 kr\n• Commitment från företag >300 000 kr",
     mediaType: "image",
-    mediaUrl: "https://cdn.midjourney.com/da3d10fe-30d1-457e-b70e-6d405689438c/0_0.png"
+    mediaUrl: "https://storage.googleapis.com/falkenberg.tech/halland-techweek/seed_grows.png"
   },
   {
     title: "UNBOXING - Roboten har kommit!",
@@ -110,18 +111,18 @@ export function MobileAlohaCarousel() {
         if (carouselRef.current) {
           if (carouselRef.current.requestFullscreen) {
             await carouselRef.current.requestFullscreen();
-          } else if ((carouselRef.current as any).webkitRequestFullscreen) {
+          } else if ('webkitRequestFullscreen' in carouselRef.current) {
             await (carouselRef.current as any).webkitRequestFullscreen();
-          } else if ((carouselRef.current as any).msRequestFullscreen) {
+          } else if ('msRequestFullscreen' in carouselRef.current) {
             await (carouselRef.current as any).msRequestFullscreen();
           }
         }
       } else {
         if (document.exitFullscreen) {
           await document.exitFullscreen();
-        } else if ((document as any).webkitExitFullscreen) {
+        } else if ('webkitExitFullscreen' in document) {
           await (document as any).webkitExitFullscreen();
-        } else if ((document as any).msExitFullscreen) {
+        } else if ('msExitFullscreen' in document) {
           await (document as any).msExitFullscreen();
         }
       }
@@ -147,7 +148,7 @@ export function MobileAlohaCarousel() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentSlide]);
+  }, []);
 
   const renderMedia = (slide: Slide) => {
     if (slide.mediaType === "component" && slide.component) {
@@ -165,11 +166,14 @@ export function MobileAlohaCarousel() {
       );
     } else {
       return (
-        <img 
-          src={slide.mediaUrl} 
-          alt={slide.title} 
-          className="w-full h-full object-cover" 
-        />
+        <div className="relative w-full h-full">
+          <Image 
+            src={slide.mediaUrl || '/placeholder-image.png'} 
+            alt={slide.title} 
+            layout="fill"
+            objectFit="cover"
+          />
+        </div>
       );
     }
   };
@@ -180,10 +184,12 @@ export function MobileAlohaCarousel() {
       onClick={toggleFullscreen}
     >
       <div className="text-center">
-        <img 
+        <Image 
           src="/placeholder-image.png" 
           alt="Click to open in full screen" 
-          className="w-[500px] h-[500px] mx-auto mb-4"
+          width={500}
+          height={500}
+          className="mx-auto mb-4"
         />
         <p className="text-xl font-bold text-white">Click to open in full screen</p>
       </div>
@@ -208,26 +214,32 @@ export function MobileAlohaCarousel() {
             Exit Fullscreen
           </Button>
           <div className="relative overflow-hidden h-full">
-            <div className="flex transition-all duration-700 ease-in-out h-full">
+            <div className="flex h-full">
               {slides.map((slide, index) => (
                 <Card
                   key={index}
-                  className={`w-full h-full flex-shrink-0 mx-auto transition-all duration-700 ease-in-out absolute ${
-                    index === currentSlide
-                      ? "scale-100 opacity-100 z-20 left-0"
-                      : index === prevSlide && direction === 1
-                      ? "scale-25 opacity-25 -left-full z-10"
-                      : index === prevSlide && direction === -1
-                      ? "scale-25 opacity-25 left-full z-10"
-                      : "scale-75 opacity-50 z-0 left-0"
-                  }`}
+                  className={`w-full h-full flex-shrink-0 mx-auto absolute transition-all duration-700 ease-in-out
+                    ${index === currentSlide ? 'slide-current' : ''}
+                    ${index === prevSlide ? 'slide-prev' : ''}
+                    ${index !== currentSlide && index !== prevSlide ? 'slide-other' : ''}
+                  `}
+                  style={{
+                    transform: `
+                      scale(${index === currentSlide ? 1 : 0.75})
+                      translateX(${index === currentSlide ? '0%' : 
+                        index === prevSlide ? (direction === 1 ? '-100%' : '100%') : 
+                        index > currentSlide ? '100%' : '-100%'})
+                    `,
+                    opacity: index === currentSlide ? 1 : 0.25,
+                    zIndex: index === currentSlide ? 20 : index === prevSlide ? 10 : 0,
+                    transition: 'all 0.7s ease-in-out',
+                  }}
                 >
                   <CardContent className="p-6 h-full flex flex-col">
                     <div className="aspect-video bg-gray-700 mb-4 rounded-lg flex items-center justify-center overflow-hidden">
                       {renderMedia(slide)}
                     </div>
-                    {/* Modified className to reduce height */}
-                    <div className="bg-gradient-to-br from-gray-100 to-gray-300 p-4 rounded-lg overflow-auto max-h-[80%]">
+                    <div className="bg-gradient-to-br from-gray-100 to-gray-300 p-4 rounded-lg overflow-auto flex-grow">
                       <h2 className="text-2xl font-bold mb-2 text-primary">{slide.title}</h2>
                       {slide.subtitle && (
                         <h3 className="text-xl text-primary-foreground mb-4">{slide.subtitle}</h3>
@@ -270,6 +282,7 @@ export function MobileAlohaCarousel() {
                 }`}
                 onClick={() => {
                   setPrevSlide(currentSlide);
+                  setDirection(index > currentSlide ? 1 : -1);
                   setCurrentSlide(index);
                 }}
               >
