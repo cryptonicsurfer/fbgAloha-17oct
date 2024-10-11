@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -93,17 +93,17 @@ export function MobileAlohaCarousel() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setPrevSlide(currentSlide);
     setDirection(1);
     setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
+  }, [currentSlide]);
 
-  const previousSlide = () => {
+  const previousSlide = useCallback(() => {
     setPrevSlide(currentSlide);
     setDirection(-1);
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  }, [currentSlide]);
 
   const toggleFullscreen = async () => {
     try {
@@ -111,18 +111,18 @@ export function MobileAlohaCarousel() {
         if (carouselRef.current) {
           if (carouselRef.current.requestFullscreen) {
             await carouselRef.current.requestFullscreen();
-          } else if ('webkitRequestFullscreen' in carouselRef.current) {
+          } else if ((carouselRef.current as any).webkitRequestFullscreen) {
             await (carouselRef.current as any).webkitRequestFullscreen();
-          } else if ('msRequestFullscreen' in carouselRef.current) {
+          } else if ((carouselRef.current as any).msRequestFullscreen) {
             await (carouselRef.current as any).msRequestFullscreen();
           }
         }
       } else {
         if (document.exitFullscreen) {
           await document.exitFullscreen();
-        } else if ('webkitExitFullscreen' in document) {
+        } else if ((document as any).webkitExitFullscreen) {
           await (document as any).webkitExitFullscreen();
-        } else if ('msExitFullscreen' in document) {
+        } else if ((document as any).msExitFullscreen) {
           await (document as any).msExitFullscreen();
         }
       }
@@ -148,7 +148,7 @@ export function MobileAlohaCarousel() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [nextSlide, previousSlide]);
 
   const renderMedia = (slide: Slide) => {
     if (slide.mediaType === "component" && slide.component) {
@@ -195,6 +195,7 @@ export function MobileAlohaCarousel() {
       </div>
     </div>
   );
+
 
   return (
     <div 
