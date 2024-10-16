@@ -25,7 +25,7 @@ const MatrixWelcome = () => {
     canvas.width = dimensions.width
     canvas.height = dimensions.height
 
-    const text = "Välkommen till Halland TechWeek 2024"
+    const text = "Open Source Robotics i Falkenberg - 2024"
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö0123456789'
     const fontSize = Math.max(20, Math.floor(dimensions.width / 50))
     const columns = Math.floor(dimensions.width / fontSize)

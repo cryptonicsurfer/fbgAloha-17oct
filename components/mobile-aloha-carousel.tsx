@@ -18,8 +18,8 @@
 
   const slides: Slide[] = [
     { 
-      title: "Välkommen till Halland TechWeek 2024", 
-      content: "Mobile Aloha Falkenberg", 
+      title: "Ett lärande från andras lärande", 
+      content: "Linda Bengtsson och Paul Klinteby", 
       mediaType: "component", 
       component: MatrixWelcome 
     },
@@ -248,9 +248,9 @@
                       <div className="bg-gradient-to-br from-gray-100 to-gray-300 p-4 rounded-lg overflow-auto flex-grow">
                         <h2 className="text-2xl font-bold mb-2 text-primary">{slide.title}</h2>
                         {slide.subtitle && (
-                          <h3 className="text-xl text-primary-foreground mb-4">{slide.subtitle}</h3>
+                          <h3 className="text-xl text-secondary-foreground mb-4">{slide.subtitle}</h3>
                         )}
-                        <div className="text-sm text-secondary-foreground whitespace-pre-wrap">
+                        <div className="text-lg text-secondary-foreground whitespace-pre-wrap">
                           {slide.content}
                         </div>
                       </div>
